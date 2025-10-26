@@ -27,7 +27,7 @@ paths:
 
 # -------- Trainer --------
 trainer:
-  accelerator: "cpu"
+  accelerator: "gpu"
   max_epochs: ${epochs}
   precision: 32
   num_sanity_val_steps: 1

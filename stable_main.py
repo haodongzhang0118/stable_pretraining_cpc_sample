@@ -10,6 +10,7 @@ from model.loss import cpc_loss
 from model.forward import cpc_forward
 from model.backbone import cpc_backbone
 from dataloader.dataset import SparseBurstChunkDataset
+from torch.utils.data import DataLoader
 
 def create_datamodule(data_cfg):
     train_dataset = SparseBurstChunkDataset(dataset_dir=data_cfg.train_dataset_dir,
