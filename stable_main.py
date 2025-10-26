@@ -30,8 +30,9 @@ def create_datamodule(data_cfg):
     return datamodule
 
 
-def create_callbacks(cfg):
+def create_callbacks(cfg, module):
     linear_probe = spt.callbacks.OnlineProbe(
+        module=module,
         name="linear_probe",
         input="embedding",
         target="label",
@@ -46,6 +47,7 @@ def create_callbacks(cfg):
     )
 
     knn_probe = spt.callbacks.OnlineKNN(
+        module=module,
         name="knn_probe",
         input="embedding",
         target="label",
@@ -82,7 +84,7 @@ def create_module(cfg):
     )
     return module
 
-def create_trainer(cfg):
+def create_trainer(cfg, module):
     if not cfg.disable_wandb:
         wandb_logger = WandbLogger(
             project=cfg.wandb_project,
@@ -96,7 +98,7 @@ def create_trainer(cfg):
         accelerator=cfg.trainer.accelerator,
         max_epochs=cfg.trainer.max_epochs,
         num_sanity_val_steps=cfg.trainer.num_sanity_val_steps,
-        callbacks=create_callbacks(cfg),
+        callbacks=create_callbacks(cfg, module),
         precision=cfg.trainer.precision,
         logger=wandb_logger,
         enable_checkpointing=cfg.trainer.enable_checkpointing,
@@ -109,7 +111,7 @@ def main(cfg_path):
     cfg = OmegaConf.load(cfg_path)
     data = create_datamodule(data_cfg=cfg.data)
     module = create_module(cfg)
-    trainer = create_trainer(cfg)
+    trainer = create_trainer(cfg, module)
     manager = spt.Manager(trainer=trainer, module=module, data=data)
     manager()
 
