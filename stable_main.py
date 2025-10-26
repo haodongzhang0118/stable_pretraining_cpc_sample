@@ -34,14 +34,13 @@ def create_callbacks(cfg):
         name="linear_probe",
         input="embedding",
         target="label",
-        probe=torch.nn.Linear(256, 50),
-        loss_fn=torch.nn.CrossEntropyLoss(),
+        probe=torch.nn.Linear(256, 2),
+        loss_fn=torch.nn.BCEWithLogitsLoss(),
         metrics={
-            "top1": torchmetrics.classification.MulticlassAccuracy(50),
-            "top5": torchmetrics.classification.MulticlassAccuracy(50, top_k=5),
-            "f1": torchmetrics.classification.MulticlassF1Score(50),
-            "precision": torchmetrics.classification.MulticlassPrecision(50),
-            "recall": torchmetrics.classification.MulticlassRecall(50),
+            "acc": torchmetrics.classification.BinaryAccuracy(),
+            "f1": torchmetrics.classification.BinaryF1Score(),
+            "precision": torchmetrics.classification.BinaryPrecision(),
+            "recall": torchmetrics.classification.BinaryRecall(),
         },
     )
 
@@ -51,6 +50,9 @@ def create_callbacks(cfg):
         target="label",
         queue_length=20000,
         k=10,
+        metrics={
+            "acc": torchmetrics.classification.BinaryAccuracy(),
+        },
     )
 
     save_model = ModelCheckpoint(
