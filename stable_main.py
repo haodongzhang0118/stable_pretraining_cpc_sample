@@ -47,7 +47,6 @@ def create_callbacks(cfg, module):
     )
 
     knn_probe = spt.callbacks.OnlineKNN(
-        module=module,
         name="knn_probe",
         input="embedding",
         target="label",
