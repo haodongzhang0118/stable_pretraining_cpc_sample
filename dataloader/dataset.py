@@ -85,4 +85,8 @@ class SparseBurstChunkDataset(Dataset):
         if self.transform:
             chunk = self.transform(chunk)
 
-        return chunk, torch.tensor(label, dtype=torch.long)
+        # Return dictionary format for stable-pretraining framework
+        return {
+            "raw_audio": chunk,
+            "label": torch.tensor(label, dtype=torch.long)
+        }
