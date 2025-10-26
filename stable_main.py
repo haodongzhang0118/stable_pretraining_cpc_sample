@@ -31,12 +31,18 @@ def create_datamodule(data_cfg):
 
 
 def create_callbacks(cfg, module):
+    # Create probe with squeeze to match BinaryAccuracy expected shape [B]
+    probe_net = torch.nn.Sequential(
+        torch.nn.Linear(256, 1),
+        torch.nn.Flatten(start_dim=0)  # [B, 1] -> [B]
+    )
+    
     linear_probe = spt.callbacks.OnlineProbe(
         module=module,
         name="linear_probe",
         input="embedding",
         target="label",
-        probe=torch.nn.Linear(256, 1),  # Binary classification: 1 output
+        probe=probe_net,
         loss_fn=torch.nn.BCEWithLogitsLoss(),
         metrics={
             "acc": torchmetrics.classification.BinaryAccuracy(),
