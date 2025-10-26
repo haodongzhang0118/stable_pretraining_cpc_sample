@@ -88,5 +88,5 @@ class SparseBurstChunkDataset(Dataset):
         # Return dictionary format for stable-pretraining framework
         return {
             "raw_audio": chunk,
-            "label": torch.tensor(label, dtype=torch.float)  # Binary classification needs float for BCEWithLogitsLoss
+            "label": torch.tensor(label, dtype=torch.long)  # MulticlassAccuracy needs long, will be converted to float for BCE loss
         }

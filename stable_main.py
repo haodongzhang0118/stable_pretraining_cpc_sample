@@ -31,24 +31,19 @@ def create_datamodule(data_cfg):
 
 
 def create_callbacks(cfg, module):
-    # Create probe with squeeze to match BinaryAccuracy expected shape [B]
-    probe_net = torch.nn.Sequential(
-        torch.nn.Linear(256, 1),
-        torch.nn.Flatten(start_dim=0)  # [B, 1] -> [B]
-    )
-    
+    # Use Multiclass mode for 2-class classification (compatible with all components)
     linear_probe = spt.callbacks.OnlineProbe(
         module=module,
         name="linear_probe",
         input="embedding",
         target="label",
-        probe=probe_net,
-        loss_fn=torch.nn.BCEWithLogitsLoss(),
+        probe=torch.nn.Linear(256, 2),  # 2 classes output
+        loss_fn=torch.nn.CrossEntropyLoss(),
         metrics={
-            "acc": torchmetrics.classification.BinaryAccuracy(),
-            "f1": torchmetrics.classification.BinaryF1Score(),
-            "precision": torchmetrics.classification.BinaryPrecision(),
-            "recall": torchmetrics.classification.BinaryRecall(),
+            "acc": torchmetrics.classification.MulticlassAccuracy(num_classes=2),
+            "f1": torchmetrics.classification.MulticlassF1Score(num_classes=2),
+            "precision": torchmetrics.classification.MulticlassPrecision(num_classes=2),
+            "recall": torchmetrics.classification.MulticlassRecall(num_classes=2),
         },
     )
 
@@ -59,7 +54,7 @@ def create_callbacks(cfg, module):
         queue_length=20000,
         k=10,
         metrics={
-            "acc": torchmetrics.classification.BinaryAccuracy(),
+            "acc": torchmetrics.classification.MulticlassAccuracy(num_classes=2),
         },
     )
 
