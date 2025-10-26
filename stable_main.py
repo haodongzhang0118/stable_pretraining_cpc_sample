@@ -36,7 +36,7 @@ def create_callbacks(cfg, module):
         name="linear_probe",
         input="embedding",
         target="label",
-        probe=torch.nn.Linear(256, 2),
+        probe=torch.nn.Linear(256, 1),  # Binary classification: 1 output
         loss_fn=torch.nn.BCEWithLogitsLoss(),
         metrics={
             "acc": torchmetrics.classification.BinaryAccuracy(),
