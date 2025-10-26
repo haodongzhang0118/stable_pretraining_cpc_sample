@@ -134,7 +134,7 @@ if __name__ == "__main__":
         num_samples=10000,
         duration=60.0,
         sample_rate=16000,
-        amp_range=(2.0, 7.0),
+        amp_range=(2.0, 5.0),
         noise_std=1.0,
         signal_fraction_range=(0.005, 0.01),
         burst_freq_hz=1000,
