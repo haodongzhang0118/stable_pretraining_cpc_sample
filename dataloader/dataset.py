@@ -2,6 +2,7 @@ import os
 import math
 import torch
 from torch.utils.data import Dataset
+from tqdm import tqdm
 
 
 class SparseBurstChunkDataset(Dataset):
@@ -43,7 +44,7 @@ class SparseBurstChunkDataset(Dataset):
 
         # Precompute index mapping: (file_index, chunk_start_sec)
         self.index_map = []
-        for file_idx, info in enumerate(self.metadata):
+        for file_idx, info in tqdm(enumerate(self.metadata), total=len(self.metadata), desc="Loading dataset"):
             total_sec = info["duration"]
             stride_sec = self.chunk_sec * (1 - self.overlap)
             num_chunks = math.floor((total_sec - self.chunk_sec) / stride_sec) + 1
