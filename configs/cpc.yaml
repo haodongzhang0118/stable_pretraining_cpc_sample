@@ -6,8 +6,9 @@
 seed: 42
 batch_size: 512
 target_sr: 16000
-window_sec: 1.0
-hop_sec: 0.5
+chunk_sec: 1.0
+overlap: 0.5
+signal_threshold: 0.05
 num_workers: 16
 epochs: 15
 disable_wandb: false
@@ -20,8 +21,8 @@ run_name: "cdck2-stable-pretraining"
 
 # -------- Paths --------
 paths:
-  audio_dir_path: "${data_path}/audio"
-  meta_csv_path: "${data_path}/meta/esc50.csv"
+  train_dataset_dir: "${data_path}/train"
+  val_dataset_dir: "${data_path}/val"
   checkpoint_dir: "./checkpoints"
 
 # -------- Trainer --------
@@ -39,14 +40,15 @@ model:
 
 # -------- Data --------
 data:
-  meta_csv_path: ${paths.meta_csv_path}
-  audio_dir_path: ${paths.audio_dir_path}
+  train_dataset_dir: ${paths.train_dataset_dir}
+  val_dataset_dir: ${paths.val_dataset_dir}
   batch_size: ${batch_size}
   num_workers: ${num_workers}
   seed: ${seed}
   target_sr: ${target_sr}
-  window_sec: ${window_sec}
-  hop_sec: ${hop_sec}
+  chunk_sec: ${chunk_sec}
+  overlap: ${overlap}
+  signal_threshold: ${signal_threshold}
 
 # -------- Optimization --------
 optim:

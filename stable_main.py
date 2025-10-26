@@ -9,19 +9,21 @@ from lightning.pytorch.callbacks import ModelCheckpoint
 from model.loss import cpc_loss
 from model.forward import cpc_forward
 from model.backbone import cpc_backbone
-from dataloader.dataset import get_esc50_dataloaders
+from dataloader.dataset import SparseBurstChunkDataset
 
 def create_datamodule(data_cfg):
-    train_loader, val_loader = get_esc50_dataloaders(
-        meta_csv_path=data_cfg.meta_csv_path,
-        audio_dir_path=data_cfg.audio_dir_path,
-        batch_size=data_cfg.batch_size,
-        num_workers=data_cfg.num_workers,
-        seed=data_cfg.seed,
-        target_sr=data_cfg.target_sr,
-        window_sec=data_cfg.window_sec,
-        hop_sec=data_cfg.hop_sec,
-    )
+    train_dataset = SparseBurstChunkDataset(dataset_dir=data_cfg.train_dataset_dir,
+    chunk_sec=data_cfg.chunk_sec,
+    overlap=data_cfg.overlap,
+    signal_threshold=data_cfg.signal_threshold)
+
+    val_dataset = SparseBurstChunkDataset(dataset_dir=data_cfg.val_dataset_dir,
+    chunk_sec=data_cfg.chunk_sec,
+    overlap=data_cfg.overlap,
+    signal_threshold=data_cfg.signal_threshold)
+
+    train_loader = DataLoader(train_dataset, batch_size=data_cfg.batch_size, shuffle=True, num_workers=data_cfg.num_workers)
+    val_loader = DataLoader(val_dataset, batch_size=data_cfg.batch_size, shuffle=False, num_workers=data_cfg.num_workers)
 
     datamodule = spt.data.DataModule(train=train_loader, val=val_loader)
     return datamodule
