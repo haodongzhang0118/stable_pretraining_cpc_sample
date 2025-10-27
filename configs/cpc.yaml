@@ -23,7 +23,7 @@ run_name: "cdck2-stable-pretraining"
 paths:
   train_dataset_dir: "${data_path}/train"
   val_dataset_dir: "${data_path}/val"
-  checkpoint_dir: "root/checkpoints/BN"
+  checkpoint_dir: "checkpoints/BN"
 
 # -------- Trainer --------
 trainer:
