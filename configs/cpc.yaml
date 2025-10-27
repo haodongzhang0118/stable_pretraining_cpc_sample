@@ -17,13 +17,13 @@ data_path: "/root/synthetic_dataset/2-5"
 # -------- Run & logging --------
 wandb_project: "cpc-syn"
 wandb_entity: null
-run_name: "LN_nopadding"
+run_name: "NN_nopadding"
 
 # -------- Paths --------
 paths:
   train_dataset_dir: "${data_path}/train"
   val_dataset_dir: "${data_path}/val"
-  checkpoint_dir: "checkpoints/LN"
+  checkpoint_dir: "checkpoints/NN"
 
 # -------- Trainer --------
 trainer:
