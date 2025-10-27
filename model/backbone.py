@@ -13,6 +13,16 @@ class LayerNorm1d(nn.Module):
         x = self.ln(x)
         return x.transpose(1, 2)   # [B, C, T]
 
+class RMSNorm1d(nn.Module):
+    def __init__(self, num_channels, eps=1e-8, affine=True):
+        super().__init__()
+        self.norm = nn.RMSNorm(num_channels, eps=eps, elementwise_affine=affine)
+
+    def forward(self, x):  # x: [B, C, T]
+        x = x.transpose(1, 2)    # [B, T, C]
+        x = self.norm(x)         # normalize over C
+        return x.transpose(1, 2) # [B, C, T]
+
 class ExtractEncoder(nn.Module):
     def __init__(self, in_chan):
         super().__init__()
@@ -20,22 +30,27 @@ class ExtractEncoder(nn.Module):
             nn.Conv1d(in_chan, 512, kernel_size=8, stride=5, padding=0, bias=False),
             # nn.BatchNorm1d(512),
             # LayerNorm1d(512),
+            RMSNorm1d(512),
             nn.ReLU(inplace=True),
             nn.Conv1d(512, 512, kernel_size=8, stride=5, padding=0, bias=False),
             # nn.BatchNorm1d(512),
             # LayerNorm1d(512),
+            RMSNorm1d(512),
             nn.ReLU(inplace=True),
             nn.Conv1d(512, 512, kernel_size=4, stride=3, padding=0, bias=False),
             # nn.BatchNorm1d(512),
             # LayerNorm1d(512),
+            RMSNorm1d(512),
             nn.ReLU(inplace=True),
             nn.Conv1d(512, 512, kernel_size=3, stride=1, padding=0, bias=False),
             # nn.BatchNorm1d(512),
             # LayerNorm1d(512),
+            RMSNorm1d(512),
             nn.ReLU(inplace=True),
             nn.Conv1d(512, 512, kernel_size=3, stride=1, padding=0, bias=False),
             # nn.BatchNorm1d(512),
             # LayerNorm1d(512),
+            RMSNorm1d(512),
             nn.ReLU(inplace=True),
         )
 
