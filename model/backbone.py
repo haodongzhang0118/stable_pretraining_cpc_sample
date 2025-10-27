@@ -22,12 +22,6 @@ class ExtractEncoder(nn.Module):
             nn.Conv1d(512, 512, kernel_size=4, stride=2, padding=0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(inplace=True),
-            nn.Conv1d(512, 512, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm1d(512),
-            nn.ReLU(inplace=True),
-            nn.Conv1d(512, 512, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm1d(512),
-            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
