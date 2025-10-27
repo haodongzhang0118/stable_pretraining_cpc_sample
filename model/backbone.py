@@ -7,19 +7,19 @@ class ExtractEncoder(nn.Module):
     def __init__(self, in_chan):
         super().__init__()
         self.encoder = nn.Sequential(
-            nn.Conv1d(in_chan, 512, kernel_size=10, stride=5, padding=0, bias=False),
+            nn.Conv1d(in_chan, 512, kernel_size=8, stride=5, padding=0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(inplace=True),
-            nn.Conv1d(512, 512, kernel_size=8, stride=4, padding=0, bias=False),
+            nn.Conv1d(512, 512, kernel_size=8, stride=5, padding=0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(inplace=True),
-            nn.Conv1d(512, 512, kernel_size=4, stride=2, padding=0, bias=False),
+            nn.Conv1d(512, 512, kernel_size=4, stride=3, padding=0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(inplace=True),
-            nn.Conv1d(512, 512, kernel_size=4, stride=2, padding=0, bias=False),
+            nn.Conv1d(512, 512, kernel_size=3, stride=1, padding=0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(inplace=True),
-            nn.Conv1d(512, 512, kernel_size=4, stride=2, padding=0, bias=False),
+            nn.Conv1d(512, 512, kernel_size=3, stride=1, padding=0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(inplace=True),
         )
