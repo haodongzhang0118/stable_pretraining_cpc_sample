@@ -205,9 +205,9 @@ def plot_tsne_grid(encoder_chunk, gru_chunk, encoder_frame, gru_frame,
 
 def main():
     # Configuration
-    CHECKPOINT_PATH = "root/checkpoints/BN/last.ckpt"
+    CHECKPOINT_PATH = "/root/stable_pretraining_cpc_sample/checkpoints/BN/best.ckpt"
     CONFIG_PATH = "configs/cpc.yaml"
-    NUM_POSITIVE = 50
+    NUM_POSITIVE = 100
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     print("=" * 60)
@@ -217,7 +217,7 @@ def main():
     # Load config and dataset
     cfg = OmegaConf.load(CONFIG_PATH)
     dataset = SparseBurstChunkDataset(
-        dataset_dir=cfg.data.val_dataset_dir,
+        dataset_dir=cfg.data.test_dataset_dir,
         chunk_sec=cfg.data.chunk_sec,
         overlap=cfg.data.overlap,
         signal_threshold=cfg.data.signal_threshold

@@ -23,6 +23,7 @@ run_name: "RMS_nopadding"
 paths:
   train_dataset_dir: "${data_path}/train"
   val_dataset_dir: "${data_path}/val"
+  test_dataset_dir: "${data_path}/test"
   checkpoint_dir: "checkpoints/RMS"
 
 # -------- Trainer --------
