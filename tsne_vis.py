@@ -263,7 +263,7 @@ def plot_tsne_grid(encoder_chunk, gru_chunk, encoder_frame, gru_frame,
 
 def main():
     # Configuration
-    method = "RMS"
+    method = "GN-1"
     CHECKPOINT_PATH = f"/root/stable_pretraining_cpc_sample/checkpoints/{method}/best.ckpt"
     CONFIG_PATH = "configs/cpc.yaml"
     NUM_POSITIVE = 100
