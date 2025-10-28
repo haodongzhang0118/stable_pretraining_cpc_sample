@@ -205,7 +205,8 @@ def plot_tsne_grid(encoder_chunk, gru_chunk, encoder_frame, gru_frame,
 
 def main():
     # Configuration
-    CHECKPOINT_PATH = "/root/stable_pretraining_cpc_sample/checkpoints/BN/best.ckpt"
+    method = "BN"
+    CHECKPOINT_PATH = f"/root/stable_pretraining_cpc_sample/checkpoints/{method}/best.ckpt"
     CONFIG_PATH = "configs/cpc.yaml"
     NUM_POSITIVE = 100
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -261,7 +262,7 @@ def main():
         encoder_chunk_tsne, gru_chunk_tsne,
         encoder_frame_tsne, gru_frame_tsne,
         labels, labels_frame,
-        save_path='tsne_visualization.png'
+        save_path=f'vis/{method}_tsne_visualization.png'
     )
     
     print("\n" + "=" * 60)
