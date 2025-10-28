@@ -130,7 +130,7 @@ def generate_sparse_burst_dataset(
 if __name__ == "__main__":
 # --- Example usage ---
     generate_sparse_burst_dataset(
-        output_dir="/root/synthetic_dataset/test",
+        output_dir="/root/synthetic_dataset/2-5/test",
         num_samples=500,
         duration=60.0,
         sample_rate=16000,
