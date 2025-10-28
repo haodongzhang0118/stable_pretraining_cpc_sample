@@ -16,7 +16,7 @@ from dataloader.dataset import SparseBurstChunkDataset
 
 def load_model(ckpt_path, device='cuda'):
     """Load trained model from checkpoint"""
-    checkpoint = torch.load(ckpt_path, map_location=device)
+    checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
     model = cpc_backbone()
     
     state_dict = checkpoint.get('state_dict', checkpoint)
@@ -210,6 +210,9 @@ def main():
     CONFIG_PATH = "configs/cpc.yaml"
     NUM_POSITIVE = 100
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+    
+    # Create output directory
+    Path("vis").mkdir(exist_ok=True)
     
     print("=" * 60)
     print("t-SNE Visualization for CPC Features")
