@@ -138,6 +138,6 @@ if __name__ == "__main__":
         noise_std=1.0,
         signal_fraction_range=(0.005, 0.01),
         burst_freq_hz=1000,
-        base_seed=42,
+        base_seed=10000086,
         save_as="pt"
     )
