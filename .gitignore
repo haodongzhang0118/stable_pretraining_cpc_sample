@@ -208,3 +208,5 @@ logs/
 
 # stable-pretraining
 stable-pretraining/
+
+checkpoints/
