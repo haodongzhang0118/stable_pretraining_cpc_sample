@@ -43,6 +43,7 @@ model:
 data:
   train_dataset_dir: ${paths.train_dataset_dir}
   val_dataset_dir: ${paths.val_dataset_dir}
+  test_dataset_dir: ${paths.test_dataset_dir}
   batch_size: ${batch_size}
   num_workers: ${num_workers}
   seed: ${seed}
