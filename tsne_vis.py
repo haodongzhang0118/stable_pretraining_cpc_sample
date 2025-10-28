@@ -150,7 +150,7 @@ def compute_tsne(features, labels, perplexity=30):
         embedded: [N, 2] array
         labels: [N] array
     """
-    tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42, n_iter=1000)
+    tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42, max_iter=1000)
     embedded = tsne.fit_transform(features.numpy())
     return embedded, labels
 
