@@ -112,8 +112,10 @@ def compute_frame_labels(frame_timestamps, dataset):
     
     Returns:
         labels: [B*T] array with 1 for frames containing signal, 0 otherwise
+        distances: [B*T] array with distance from signal (for negative sampling)
     """
     labels = []
+    distances = []
     
     for file_idx, chunk_start_sec, chunk_end_sec, frame_idx, num_frames in frame_timestamps:
         info = dataset.metadata[file_idx]
@@ -134,15 +136,65 @@ def compute_frame_labels(frame_timestamps, dataset):
         # Frame is positive if it has any overlap with signal
         label = 1 if overlap > 0 else 0
         labels.append(label)
+        
+        # Calculate distance from signal (for negative sampling priority)
+        if label == 0:
+            distance = min(abs(frame_start - burst_end), abs(frame_end - burst_start))
+        else:
+            distance = 0.0
+        distances.append(distance)
     
-    return np.array(labels)
+    return np.array(labels), np.array(distances)
+
+
+def balance_frame_samples(features, labels, distances, seed=42):
+    """Balance positive and negative frame samples
+    
+    Args:
+        features: [N, D] tensor
+        labels: [N] array
+        distances: [N] array - distance from signal for each negative frame
+        seed: random seed
+    
+    Returns:
+        balanced_features: [2M, D] tensor where M is number of positive frames
+        balanced_labels: [2M] array
+    """
+    positive_idx = np.where(labels == 1)[0]
+    negative_idx = np.where(labels == 0)[0]
+    
+    num_positive = len(positive_idx)
+    
+    # Sort negative frames by distance (prefer far negatives)
+    negative_distances = distances[negative_idx]
+    sorted_neg_idx = negative_idx[np.argsort(-negative_distances)]  # Descending order
+    
+    # Select top distant negatives, then shuffle
+    # Take top 50% by distance, then random sample from them
+    top_k = min(len(sorted_neg_idx), num_positive * 2)
+    far_negatives = sorted_neg_idx[:top_k]
+    
+    np.random.seed(seed)
+    selected_negative = np.random.choice(far_negatives, size=num_positive, replace=False)
+    
+    # Combine and shuffle
+    selected_idx = np.concatenate([positive_idx, selected_negative])
+    shuffle_order = np.random.permutation(len(selected_idx))
+    selected_idx = selected_idx[shuffle_order]
+    
+    # Index features based on type
+    if torch.is_tensor(features):
+        selected_idx_tensor = torch.from_numpy(selected_idx).long()
+        return features[selected_idx_tensor], labels[selected_idx]
+    else:
+        return features[selected_idx], labels[selected_idx]
 
 
 def compute_tsne(features, labels, perplexity=30):
     """Compute t-SNE embedding
     
     Args:
-        features: [N, D] tensor
+        features: [N, D] tensor or array
         labels: [N] array
         perplexity: t-SNE perplexity parameter
     
@@ -150,8 +202,14 @@ def compute_tsne(features, labels, perplexity=30):
         embedded: [N, 2] array
         labels: [N] array
     """
+    # Convert tensor to numpy if needed
+    if torch.is_tensor(features):
+        features_np = features.numpy()
+    else:
+        features_np = features
+    
     tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42, max_iter=1000)
-    embedded = tsne.fit_transform(features.numpy())
+    embedded = tsne.fit_transform(features_np)
     return embedded, labels
 
 
@@ -205,7 +263,7 @@ def plot_tsne_grid(encoder_chunk, gru_chunk, encoder_frame, gru_frame,
 
 def main():
     # Configuration
-    method = "BN"
+    method = "LN"
     CHECKPOINT_PATH = f"/root/stable_pretraining_cpc_sample/checkpoints/{method}/best.ckpt"
     CONFIG_PATH = "configs/cpc.yaml"
     NUM_POSITIVE = 100
@@ -244,12 +302,25 @@ def main():
     gru_frame = gru_feats.reshape(-1, gru_feats.shape[-1])  # [B*T, 256]
     
     # Compute precise frame-level labels based on signal overlap
-    labels_frame = compute_frame_labels(frame_timestamps, dataset)  # [B*T]
+    labels_frame_all, distances_frame = compute_frame_labels(frame_timestamps, dataset)  # [B*T]
     
     print(f"\nChunk-level shapes: encoder {encoder_chunk.shape}, gru {gru_chunk.shape}")
     print(f"Chunk-level labels: {labels.sum():.0f} positive / {len(labels)} total")
-    print(f"\nFrame-level shapes: encoder {encoder_frame.shape}, gru {gru_frame.shape}")
-    print(f"Frame-level labels: {labels_frame.sum():.0f} positive / {len(labels_frame)} total")
+    print(f"\nFrame-level (before balancing):")
+    print(f"  Shapes: encoder {encoder_frame.shape}, gru {gru_frame.shape}")
+    print(f"  Labels: {labels_frame_all.sum():.0f} positive / {len(labels_frame_all)} total")
+    
+    # Balance frame-level samples
+    encoder_frame_balanced, labels_frame = balance_frame_samples(
+        encoder_frame, labels_frame_all, distances_frame
+    )
+    gru_frame_balanced, _ = balance_frame_samples(
+        gru_frame, labels_frame_all, distances_frame
+    )
+    
+    print(f"\nFrame-level (after balancing):")
+    print(f"  Shapes: encoder {encoder_frame_balanced.shape}, gru {gru_frame_balanced.shape}")
+    print(f"  Labels: {labels_frame.sum():.0f} positive / {len(labels_frame)} total")
     
     # Compute t-SNE embeddings
     print("\nComputing t-SNE for chunk-level features...")
@@ -257,8 +328,8 @@ def main():
     gru_chunk_tsne, _ = compute_tsne(gru_chunk, labels)
     
     print("Computing t-SNE for frame-level features...")
-    encoder_frame_tsne, _ = compute_tsne(encoder_frame, labels_frame, perplexity=50)
-    gru_frame_tsne, _ = compute_tsne(gru_frame, labels_frame, perplexity=50)
+    encoder_frame_tsne, _ = compute_tsne(encoder_frame_balanced, labels_frame, perplexity=50)
+    gru_frame_tsne, _ = compute_tsne(gru_frame_balanced, labels_frame, perplexity=50)
     
     # Plot all results
     plot_tsne_grid(
