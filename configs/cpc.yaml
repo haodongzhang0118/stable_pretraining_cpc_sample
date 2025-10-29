@@ -17,14 +17,14 @@ data_path: "/root/synthetic_dataset/2-5"
 # -------- Run & logging --------
 wandb_project: "cpc-syn-noise"
 wandb_entity: null
-run_name: "RMS_nopadding"
+run_name: "NN_nopadding"
 
 # -------- Paths --------
 paths:
   train_dataset_dir: "${data_path}/train"
   val_dataset_dir: "${data_path}/val"
   test_dataset_dir: "${data_path}/test"
-  checkpoint_dir: "checkpoints/RMS"
+  checkpoint_dir: "checkpoints/NN"
 
 # -------- Trainer --------
 trainer:
