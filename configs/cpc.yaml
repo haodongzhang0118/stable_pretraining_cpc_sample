@@ -15,16 +15,16 @@ disable_wandb: false
 data_path: "/root/synthetic_dataset/2-5"
 
 # -------- Run & logging --------
-wandb_project: "cpc-syn"
+wandb_project: "cpc-syn-noise"
 wandb_entity: null
-run_name: "GN-LN-256_nopadding"
+run_name: "BN_nopadding"
 
 # -------- Paths --------
 paths:
   train_dataset_dir: "${data_path}/train"
   val_dataset_dir: "${data_path}/val"
   test_dataset_dir: "${data_path}/test"
-  checkpoint_dir: "checkpoints/GN-LN-256"
+  checkpoint_dir: "checkpoints/BN"
 
 # -------- Trainer --------
 trainer:
