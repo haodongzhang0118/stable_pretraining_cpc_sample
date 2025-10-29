@@ -1,0 +1,1 @@
+Error getting pip freeze: Command '['/root/stable_pretraining_cpc_sample/.venv/bin/python', '-m', 'pip', 'freeze']' returned non-zero exit status 1.
