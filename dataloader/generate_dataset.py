@@ -151,6 +151,10 @@ def generate_sparse_burst_dataset(
     """
     os.makedirs(output_dir, exist_ok=True)
     infos = []
+    if bigger_noise:
+        print("Using Bigger Noise as the signal")
+    else:
+        print("Using Random Burst as the signal")
 
     for i in tqdm(range(num_samples), desc="Generating dataset"):
         # Compute the allowed burst duration range (in seconds)
@@ -159,7 +163,6 @@ def generate_sparse_burst_dataset(
 
         # Generate one sample with a random burst
         if bigger_noise:
-            print("Using Bigger Noise as the signal")
             audio, info = synthesize_amplified_noise_audio(
                 sample_rate=sample_rate,
                 duration=duration,
@@ -171,7 +174,6 @@ def generate_sparse_burst_dataset(
                 seed=base_seed + i
             )
         else:   
-            print("Using Random Burst as the signal")
             audio, info = synthesize_random_burst_audio(
                 sample_rate=sample_rate,
                 duration=duration,
