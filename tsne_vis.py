@@ -263,7 +263,7 @@ def plot_tsne_grid(encoder_chunk, gru_chunk, encoder_frame, gru_frame,
 
 def main():
     # Configuration
-    method = "GN-512"
+    method = "GN-LN-256"
     CHECKPOINT_PATH = f"/root/stable_pretraining_cpc_sample/checkpoints/{method}/last.ckpt"
     CONFIG_PATH = "configs/cpc.yaml"
     NUM_POSITIVE = 100
