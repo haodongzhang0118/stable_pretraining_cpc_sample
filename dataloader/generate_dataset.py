@@ -207,15 +207,15 @@ def generate_sparse_burst_dataset(
 if __name__ == "__main__":
 # --- Example usage ---
     generate_sparse_burst_dataset(
-        output_dir="/root/synthetic_dataset/2-5/test",
-        num_samples=500,
+        output_dir="/root/synthetic_dataset/2-5/train",
+        num_samples=8000,
         duration=60.0,
         sample_rate=16000,
         amp_range=(2.0, 5.0),
         noise_std=1.0,
         signal_fraction_range=(0.005, 0.01),
         burst_freq_hz=1000,
-        base_seed=10000086,
+        base_seed=42,
         save_as="pt",
         bigger_noise=True
     )
